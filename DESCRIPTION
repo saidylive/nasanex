@@ -1,0 +1,11 @@
+Package: nasanex
+Type: Package
+Title: NASA NEX Data Manager (NASA NEX)
+Version: 0.1.0
+Author: Md. Sheikh Saidy
+Maintainer: Md. Sheikh Saidy <saidylive@gmail.com>
+Description: Complete Manager for NASA NEX satellite images. To Download, Process 
+    and manipulate satellite images files and data.
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
