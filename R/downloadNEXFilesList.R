@@ -38,6 +38,3 @@ downloadNEXFilesList <- function() { # nolint
   }
   return(url)
 }
-downloadNEXFilesList()
-
-rm(list = ls())
