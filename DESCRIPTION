@@ -9,3 +9,6 @@ Description: Complete Manager for NASA NEX satellite images. To Download, Proces
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
+RoxygenNote: 7.2.3
+Depends:
+  stringr

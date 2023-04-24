@@ -1,9 +1,15 @@
-library("stringr")
+#' Download metadata of NEX Server
+#'
+#' Download NEX satelliste image based on variable, model, case and year in working directory
+#' @return VOID
+#' @examples
+#' downloadNEXFilesList();
+#' @export
 downloadNEXFilesList <- function() { # nolint
   defaultTimeout <- getOption("timeout")
   options(timeout = 100000000)
   url <- "https://nex-gddp-cmip6.s3-us-west-2.amazonaws.com/gddp-cmip6-files.csv" # nolint: line_length_linter.
-  destdir <- file.path("./data")
+  destdir <- file.path("./nex_data")
   filepath <- file.path(destdir, "gddp-cmip6-files.csv")
   filepath.final <- file.path(destdir, "files-list.csv")
   filepath.model <- file.path(destdir, "models.csv")
@@ -36,5 +42,4 @@ downloadNEXFilesList <- function() { # nolint
       row.names = F
     )
   }
-  return(url)
 }

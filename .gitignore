@@ -4,3 +4,5 @@
 .Ruserdata
 /.vs-code
 .DS_Store
+/nex_data
+/nex_nc
