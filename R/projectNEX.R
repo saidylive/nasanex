@@ -19,7 +19,7 @@ extract_NEX <- function(targetPoints, variable, model, case, year) {
   if(!dir.exists(download_dir) | !file.exists(filepath)){
     download_NEX(variable, model, case, year)
   }
-  st <- stack(nc_file_path, varname = variable)
+  st <- stack(filepath, varname = variable)
   # stmean <- calc(st, fun = mean, na.rm = T)
   values <- extract(st, targetPoints)
   return(values)
@@ -51,11 +51,11 @@ visualize_NEX <- function(referenceShp, variable, model, case, year, fun = mean)
   e <- as(ex, 'SpatialPolygons')
   crs(e) <- crs(referenceShp)
 
-  st <- stack(nc_file_path, varname = variable)
+  st <- stack(filepath, varname = variable)
   r <- crop(st, referenceShp)
   rmean <- calc(r, fun = fun, na.rm = T) - 273
 
-  levelplot(rmean, margin = FALSE, contour=F,
+  lplot = levelplot(rmean, margin = FALSE, contour=F,
             panel=function(...) {
               panel.levelplot(...)
               sp.polygons(referenceShp, fill = NA, col = "black", alpha=1)
@@ -63,7 +63,7 @@ visualize_NEX <- function(referenceShp, variable, model, case, year, fun = mean)
 
   # plot(rmean)
   # plot(referenceShp, add=T)
-  return(rmean)
+  return(list(data=rmean, fig=lplot))
 }
 
 
@@ -75,14 +75,13 @@ visualize_NEX <- function(referenceShp, variable, model, case, year, fun = mean)
 #' @param model Model name ex. ACCESS-ESM1-5, CESM2
 #' @param case Case name ex. ssp245, ssp585
 #' @param year target year after 2015
-#' @param fig Figure as Boolean value as want to output the figure or not. Default value is FALSE
 #' @return Dataframe of all the points contains reference Shape Object in SP SpatialPointsDataFrame
 #' @examples
 #' data(bdDistrictShapes)
 #' extract_grid_NEX(bdDistrictShapes, "tas", "ACCESS-ESM1-5", "ssp245", 2028);
 #' extract_grid_NEX(bdDistrictShapes, get_nex_variable_list()[1], get_nex_model_list()[1], get_nex_case_list()[1], 2028);
 #' @export
-extract_grid_NEX <- function(referenceShp, variable, model, case, year, fig=F) {
+extract_grid_NEX <- function(referenceShp, variable, model, case, year) {
   filepath = get_nex_nc_file_path(variable, model, case, year)
   download_dir = dirname(filepath)
   if(!dir.exists(download_dir) | !file.exists(filepath)){
@@ -107,9 +106,7 @@ extract_grid_NEX <- function(referenceShp, variable, model, case, year, fig=F) {
 
   df <- df[df$id %in% o$id, ]
 
-  if(fig){
-    plot(referenceShp)
-    plot(df, add=T, col="red")
-  }
+  # ap = plot(referenceShp)
+  # plot(df, add=T, col="red")
   return(df)
 }

@@ -4,7 +4,7 @@
 \alias{extract_grid_NEX}
 \title{Extract GRID points provided Shape file}
 \usage{
-extract_grid_NEX(referenceShp, variable, model, case, year, fig = F)
+extract_grid_NEX(referenceShp, variable, model, case, year)
 }
 \arguments{
 \item{referenceShp}{Reference shape that want to extract}
@@ -16,8 +16,6 @@ extract_grid_NEX(referenceShp, variable, model, case, year, fig = F)
 \item{case}{Case name ex. ssp245, ssp585}
 
 \item{year}{target year after 2015}
-
-\item{fig}{Figure as Boolean value as want to output the figure or not. Default value is FALSE}
 }
 \value{
 Dataframe of all the points contains reference Shape Object in SP SpatialPointsDataFrame
