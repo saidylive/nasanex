@@ -4,16 +4,18 @@
 \alias{download_NEX}
 \title{NEX NC File download}
 \usage{
-download_NEX(variable, model, case, year)
+download_NEX(variable, model, case, year, force = F)
 }
 \arguments{
 \item{variable}{name ex. tas, tasmax, tasmin, pr}
 
-\item{model}{name ex. ACCESS-ESM1-5, CESM2}
+\item{model}{Model name ex. ACCESS-ESM1-5, CESM2}
 
-\item{case}{name ex. ssp245, ssp585}
+\item{case}{Case name ex. ssp245, ssp585}
 
 \item{year}{target year after 2015}
+
+\item{force}{Force download if already downloaded before}
 }
 \value{
 Void
@@ -23,6 +25,7 @@ Download NEX satelliste image based on variable, model, case and year in working
 }
 \examples{
 download_NEX("pr", "CESM2", "ssp245", 2025);
-download_NEX("tas", "ACCESS-ESM1-5", "ssp245", 2028);
+download_NEX("tas", "ACCESS-ESM1-5", "ssp245", 2028, force=T);
+download_NEX("tasmax", "ACCESS-CM2", "ssp245", 2025);
 download_NEX(get_nex_variable_list()[1], get_nex_model_list()[1], get_nex_case_list()[1], 2028);
 }

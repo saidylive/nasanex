@@ -2,16 +2,18 @@
 #'
 #' Download NEX satelliste image based on variable, model, case and year in working directory
 #' @param variable name ex. tas, tasmax, tasmin, pr
-#' @param model name ex. ACCESS-ESM1-5, CESM2
-#' @param case name ex. ssp245, ssp585
+#' @param model Model name ex. ACCESS-ESM1-5, CESM2
+#' @param case Case name ex. ssp245, ssp585
 #' @param year target year after 2015
+#' @param force Force download if already downloaded before
 #' @return Void
 #' @examples
 #' download_NEX("pr", "CESM2", "ssp245", 2025);
-#' download_NEX("tas", "ACCESS-ESM1-5", "ssp245", 2028);
+#' download_NEX("tas", "ACCESS-ESM1-5", "ssp245", 2028, force=T);
+#' download_NEX("tasmax", "ACCESS-CM2", "ssp245", 2025);
 #' download_NEX(get_nex_variable_list()[1], get_nex_model_list()[1], get_nex_case_list()[1], 2028);
 #' @export
-download_NEX <- function(variable, model, case, year) { # nolint: object_name_linter.
+download_NEX <- function(variable, model, case, year, force=F) { # nolint: object_name_linter.
   check_meta_files()
   has_model <- is_nex_model_exist(model)
   has_case <- is_nex_case_exist(case)
@@ -36,10 +38,10 @@ download_NEX <- function(variable, model, case, year) { # nolint: object_name_li
     url <- paste0("https://nex-gddp-cmip6.s3.us-west-2.amazonaws.com/NEX-GDDP-CMIP6/",
                   model, "/", case, "/", model_hash, "/", variable, "/",
                   filename)
-    if (!file.exists(filepath)) {
+    if (!file.exists(filepath) | force) {
       defaultTimeout <- getOption("timeout")
       options(timeout = 100000000)
-      download.file(url, filepath, quiet = F, method = "auto")
+      download.file(url, filepath, quiet = F, method = "curl")
       options(timeout = defaultTimeout)
     }
   }

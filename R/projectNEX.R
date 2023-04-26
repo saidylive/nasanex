@@ -1,43 +1,27 @@
-lon <- seq(5, 15, 0.5)
-lat <- seq(45, 55, 0.5)
-lon2 <- seq(5, 15, 1)
-lat2 <- seq(45, 55, 1)
-time <- c(as.Date("2000-01-01"), as.Date("2001-02-01"))
-origin <- as.Date("1983-01-01 00:00:00")
-time <- as.numeric(difftime(time, origin, units = "hour"))
-data1 <- array(250:350, dim = c(21, 21, 1))
-data2 <- array(230:320, dim = c(21, 21, 1))
-
-## create two example NetCDF files
-
-x <- ncdim_def(name = "lon", units = "degrees_east", vals = lon)
-y <- ncdim_def(name = "lat", units = "degrees_north", vals = lat)
-t <- ncdim_def(name = "time", units = "hours since 1983-01-01 00:00:00",
-               vals = time[1], unlim = TRUE)
-var1 <- ncvar_def("SIS", "W m-2", list(x, y, t), -1, prec = "short")
-vars <- list(var1)
-ncnew <- nc_create(file.path(tempdir(),"CMSAF_example_file_1.nc"), vars)
-ncvar_put(ncnew, var1, data1)
-ncatt_put(ncnew, "lon", "standard_name", "longitude", prec = "text")
-ncatt_put(ncnew, "lat", "standard_name", "latitude", prec = "text")
-nc_close(ncnew)
-
-x <- ncdim_def(name = "lon", units = "degrees_east", vals = lon2)
-y <- ncdim_def(name = "lat", units = "degrees_north", vals = lat2)
-t <- ncdim_def(name = "time", units = "hours since 1983-01-01 00:00:00",
-               vals = time[1], unlim = TRUE)
-ncnew <- nc_create(file.path(tempdir(),"CMSAF_example_file_2.nc"), vars)
-ncvar_put(ncnew, var1, data2)
-ncatt_put(ncnew, "lon", "standard_name", "longitude", prec = "text")
-ncatt_put(ncnew, "lat", "standard_name", "latitude", prec = "text")
-nc_close(ncnew)
-
-## Interpolate the fields of both example CM SAF NetCDF file 1 to the
-## coarser grid of file 2 and write the result into one output file.
-remap(var = "SIS", infile1 = file.path(tempdir(),"CMSAF_example_file_1.nc"),
-      infile2 = file.path(tempdir(),"CMSAF_example_file_2.nc"),
-      outfile = file.path(tempdir(),"CMSAF_example_file_remap.nc"))
-
-unlink(c(file.path(tempdir(),"CMSAF_example_file_1.nc"),
-         file.path(tempdir(),"CMSAF_example_file_2.nc"),
-         file.path(tempdir(),"CMSAF_example_file_remap.nc")))
+#' Extract NEX data for certain points
+#'
+#' Download NEX satelliste image based on variable, model, case and year in working directory
+#' @param targetPoints Target points that want to extract in SpatialPointsDataFrame object
+#' @param variable name ex. tas, tasmax, tasmin, pr
+#' @param model Model name ex. ACCESS-ESM1-5, CESM2
+#' @param case Case name ex. ssp245, ssp585
+#' @param year target year after 2015
+#' @return Void
+#' @examples
+#' data(bdDistrictCentroids)
+#' extract_NEX(bdDistrictCentroids, "tas", "ACCESS-ESM1-5", "ssp245", 2028);
+#' extract_NEX(bdDistrictCentroids, get_nex_variable_list()[1], get_nex_model_list()[1], get_nex_case_list()[1], 2028);
+#' @export
+extract_NEX <- function(targetPoints, variable, model, case, year) {
+  dir_name <- "nex_nc"
+  model_hash <- get_nex_hash_by_model(model)
+  download_dir = file.path(getwd(), dir_name, model, case, variable)
+  filename <- paste0(variable, "_day_", model, "_", case, "_", model_hash, "_gn_", year, ".nc")
+  filepath <- file.path(download_dir, filename)
+  if(!dir.exists(download_dir) | !file.exists(filepath)){
+    download_NEX(variable, model, case, year)
+  }
+  st <- stack(nc_file_path, varname = variable)
+  values <- extract(st, targetPoints)
+  return(values)
+}
