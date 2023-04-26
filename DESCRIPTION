@@ -15,10 +15,9 @@ Depends:
     raster,
     ncdf4,
     rgdal,
-    remap,
     ggplot2,
     tidync,
-    akima,
+    rasterVis,
     RCurl,
     maptools,
     R (>= 2.10)

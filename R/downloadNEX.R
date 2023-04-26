@@ -28,16 +28,15 @@ download_NEX <- function(variable, model, case, year, force=F) { # nolint: objec
   if(!is_valid_historical){message("Year should be between 'historical' for the year between 1950 to 2014")}
 
   if(has_model & has_case & has_variable & is_valid_year & is_valid_historical ){
-    download_dir = file.path(getwd(), dir_name, model, case, variable)
+    filepath = get_nex_nc_file_path(variable, model, case, year)
+    download_dir = dirname(filepath)
+    filename = str_sub(filepath, str_length(download_dir)+2)
     if(!dir.exists(download_dir)){
       dir.create(download_dir, recursive = TRUE)
     }
-    filename <- paste0(variable, "_day_", model, "_", case, "_", model_hash, "_gn_",
-                       year, ".nc")
-    filepath <- file.path(download_dir, filename)
+    filename <- paste0(variable, "_day_", model, "_", case, "_", model_hash, "_gn_", year, ".nc")
     url <- paste0("https://nex-gddp-cmip6.s3.us-west-2.amazonaws.com/NEX-GDDP-CMIP6/",
-                  model, "/", case, "/", model_hash, "/", variable, "/",
-                  filename)
+                  model, "/", case, "/", model_hash, "/", variable, "/", filename)
     if (!file.exists(filepath) | force) {
       defaultTimeout <- getOption("timeout")
       options(timeout = 100000000)
@@ -151,4 +150,12 @@ get_nex_hash_by_model <- function(model){
 }
 # get_nex_hash_by_model("sadfs")
 
+get_nex_nc_file_path <- function(variable, model, case, year){
+  dir_name <- "nex_nc"
+  model_hash <- get_nex_hash_by_model(model)
+  download_dir = file.path(getwd(), dir_name, model, case, variable)
+  filename <- paste0(variable, "_day_", model, "_", case, "_", model_hash, "_gn_", year, ".nc")
+  filepath <- file.path(download_dir, filename)
+  return(filepath)
+}
 
